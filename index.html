@@ -251,32 +251,35 @@
             );
         };
 
+        // --- Extracted Timeline Component (Fixed Slider Issue) ---
+        const Timeline = ({ data, selectedIndex, setSelectedIndex }) => {
+            if (!data || data.length === 0) return null;
+            const hours = data.map(d => d.hourLabel);
+            return (
+                <div className="bg-slate-900 border-t border-slate-700 pb-1 pt-2 shrink-0 w-full z-20">
+                    <div className="flex justify-between px-4 text-[10px] text-slate-500 mb-1">
+                        {hours.filter((_, i) => i % 4 === 0).map((h, i) => <span key={i}>{h}</span>)}
+                    </div>
+                    <div className="relative h-10 px-4 flex items-center">
+                        <input type="range" min="0" max={data.length - 1} value={selectedIndex} onChange={(e) => setSelectedIndex(parseInt(e.target.value))} className="relative z-10 w-full" />
+                    </div>
+                    <div className="flex w-full bg-slate-800 text-xs text-center mt-1 overflow-hidden">
+                        {data.slice(0, 7).map((d, i) => (
+                            <div key={i} className={`flex-1 py-1 border-r border-slate-700/50 ${selectedIndex === i ? 'bg-slate-700 text-white font-bold border-b-2 border-green-500' : 'bg-slate-900 text-slate-500'}`}>
+                                <div className="uppercase text-[9px]">{d.dayLabel}</div>
+                                <div>{d.hourLabel}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
         // --- Tab 1: Conditions View ---
         const ConditionsView = ({ currentData, forecastData, selectedIndex, setSelectedIndex }) => {
             const weatherIcon = getWeatherIcon(currentData.conditionCode, currentData.isDay);
             
-            const Timeline = ({ data, selectedIndex, setSelectedIndex }) => {
-                if (!data || data.length === 0) return null;
-                const hours = data.map(d => d.hourLabel);
-                return (
-                    <div className="bg-slate-900 border-t border-slate-700 pb-1 pt-2 shrink-0 w-full z-20">
-                        <div className="flex justify-between px-4 text-[10px] text-slate-500 mb-1">
-                            {hours.filter((_, i) => i % 4 === 0).map((h, i) => <span key={i}>{h}</span>)}
-                        </div>
-                        <div className="relative h-10 px-4 flex items-center">
-                            <input type="range" min="0" max={data.length - 1} value={selectedIndex} onChange={(e) => setSelectedIndex(parseInt(e.target.value))} className="relative z-10 w-full" />
-                        </div>
-                        <div className="flex w-full bg-slate-800 text-xs text-center mt-1 overflow-hidden">
-                            {data.slice(0, 7).map((d, i) => (
-                                <div key={i} className={`flex-1 py-1 border-r border-slate-700/50 ${selectedIndex === i ? 'bg-slate-700 text-white font-bold border-b-2 border-green-500' : 'bg-slate-900 text-slate-500'}`}>
-                                    <div className="uppercase text-[9px]">{d.dayLabel}</div>
-                                    <div>{d.hourLabel}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            };
+            // Timeline was previously defined here - causing the re-render bug
 
             const StatusBanner = ({ statusData }) => {
                 const { status, reason } = statusData;
